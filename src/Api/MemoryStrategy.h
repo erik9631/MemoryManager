@@ -10,7 +10,6 @@ namespace MemManager
     {
     public:
         virtual size_t CreateMemoryChunk(const size_t &size) = 0;
-        virtual void EraseMemoryChunk(size_t chunkAddress) = 0;
 
         /**
          *
