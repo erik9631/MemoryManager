@@ -14,7 +14,7 @@
 #include "Utils.hpp"
 #include <catch.hpp>
 
-
+using namespace MemManager;
 int CustomMemoryTest(MemoryManager<TestMemoryStrategy>& manager, const size_t& size)
 {
     for(int i = 0; i < size; i++)

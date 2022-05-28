@@ -9,7 +9,7 @@
 #include "MetaData.hpp"
 #include "TestMemoryStrategy.hpp"
 #include <catch.hpp>
-
+using namespace MemManager;
 
 
 TEST_CASE("Integer Memory Test two values", "[IntegerMemoryTest1]")

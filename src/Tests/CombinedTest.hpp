@@ -11,7 +11,7 @@
 #include "MemoryStrategy.h"
 #include "Utils.hpp"
 #include <catch.hpp>
-
+using namespace MemManager;
 TEST_CASE("Small combined test", "[SmallCombinedTest]")
 {
     MemoryManager<TestMemoryStrategy> manager;

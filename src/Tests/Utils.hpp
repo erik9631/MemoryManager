@@ -4,6 +4,8 @@
 
 #ifndef REDBLACKMEMORYMANAGER_UTILS_HPP
 #define REDBLACKMEMORYMANAGER_UTILS_HPP
+using namespace MemManager;
+
 
 size_t RoundToPowerOfTwo(size_t value)
 {

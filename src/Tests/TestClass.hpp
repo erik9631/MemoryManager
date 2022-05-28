@@ -4,6 +4,8 @@
 
 #ifndef REDBLACKMEMORYMANAGER_TESTCLASS_HPP
 #define REDBLACKMEMORYMANAGER_TESTCLASS_HPP
+using namespace MemManager;
+
 class TestClass
 {
 public:

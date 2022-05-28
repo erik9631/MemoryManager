@@ -5,37 +5,39 @@
 #ifndef REDBLACKMEMORYMANAGER_MANAGEDPTR_HPP
 #define REDBLACKMEMORYMANAGER_MANAGEDPTR_HPP
 #include "MetaData.hpp"
-template<class MemoryStrategyType, class MetaDataType>
-class MemoryManager;
-
-template<class Type, class MemoryStrategyType, class MetaDataType = size_t>
-class ManagedPtr
+namespace MemManager
 {
-public:
-    ManagedPtr(MemoryManager<MemoryStrategyType, MetaDataType>& manager, MetaData<MetaDataType>& objectMetaData) :
-    manager(manager),
-    objectMetaData(objectMetaData){}
+    template<class MemoryStrategyType, class MetaDataType>
+    class MemoryManager;
 
-    Type& operator * ()
+    template<class Type, class MemoryStrategyType, class MetaDataType = size_t>
+    class ManagedPtr
     {
-        return *manager.GetData<Type>(objectMetaData.GetOffset());
-    }
+    public:
+        ManagedPtr(MemoryManager<MemoryStrategyType, MetaDataType> &manager, MetaData<MetaDataType> &objectMetaData) :
+            manager(manager), objectMetaData(objectMetaData)
+        {}
 
-    Type* operator ->()
-    {
-        return manager.GetData<Type>(objectMetaData.GetOffset());
-    }
+        Type &operator*()
+        {
+            return *manager.GetData<Type>(objectMetaData.GetOffset());
+        }
 
-    void Free()
-    {
-        manager.Remove<Type>(objectMetaData);
-    }
+        Type *operator->()
+        {
+            return manager.GetData<Type>(objectMetaData.GetOffset());
+        }
+
+        void Free()
+        {
+            manager.Remove<Type>(objectMetaData);
+        }
 
 
-private:
-    MetaData<MetaDataType>& objectMetaData;
-    MemoryManager<MemoryStrategyType, MetaDataType>& manager;
-};
-
+    private:
+        MetaData<MetaDataType> &objectMetaData;
+        MemoryManager<MemoryStrategyType, MetaDataType> &manager;
+    };
+}
 
 #endif //REDBLACKMEMORYMANAGER_MANAGEDPTR_HPP

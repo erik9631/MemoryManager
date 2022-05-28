@@ -9,7 +9,7 @@
 #include "MemoryStrategy.h"
 #include "Utils.hpp"
 #include <catch.hpp>
-
+using namespace MemManager;
 
 
 

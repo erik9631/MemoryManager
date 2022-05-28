@@ -8,7 +8,7 @@
 #include "MetaData.hpp"
 #include <memory.h>
 #include <cstdlib>
-
+using namespace MemManager;
 
 class TestMemoryStrategy : public MemoryStrategy
 {

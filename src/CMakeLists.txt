@@ -7,8 +7,7 @@ set(MemoryManager
         MemoryManager/MemoryManager.hpp
         MemoryManager/MetaData.hpp
         MemoryManager/ManagedPtr.hpp
-    MemoryManager/ManagedPtr.cpp
-)
+        )
 source_group(RedBlackMemoryManager/src/MemoryManager FILES ${MemoryManager})
 
 set(Api
