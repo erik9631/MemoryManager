@@ -19,11 +19,6 @@ public:
         return (size_t)newAddr;
     }
 
-    void EraseMemoryChunk(size_t chunkAddress) override
-    {
-
-    }
-
     size_t Realloc(const size_t &memoryStartAddr, const size_t &oldSize, const size_t &newSize) override
     {
         void* oldAddr = (void*)memoryStartAddr;
