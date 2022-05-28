@@ -26,7 +26,7 @@ namespace MemManager
         * @param size
         * @param offset
         * template<typename T, typename MetaDataType, typename ... Args>
-        * T* WriteData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, Args ... args);
+        * void WriteData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, Args ... args);
         */
 
         /**
