@@ -37,11 +37,10 @@ public:
     }
 
     template<typename T, typename MetaDataType, typename ... Args>
-    T* WriteData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, Args ... args)
+    void WriteData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, Args ... args)
     {
-        T* allocatedObj = new((void*)(metaData.GetOffset() + memoryStartAddr)) T(args ...);
+        new((void*)(metaData.GetOffset() + memoryStartAddr)) T(args ...);
         usedMemory+= sizeof(T);
-        return allocatedObj;
     }
 
     template<typename T>
