@@ -79,7 +79,7 @@ namespace MemManager
 
             auto newMetaData = std::unique_ptr<MetaData<MetaDataType>>(metaData);
             allocatedMemoryMap.insert({metaData->GetOffset(), std::move(newMetaData)});
-            return std::move(ManagedPtr<T, MemoryStrategyType, MetaDataType>{*this, *metaData});
+            return std::move(ManagedPtr<T, MemoryStrategyType, MetaDataType>{this, metaData});
         }
 
         template<typename T, typename ... Args>

@@ -14,35 +14,41 @@ namespace MemManager
     class ManagedPtr
     {
     public:
-        ManagedPtr(MemoryManager<MemoryStrategyType, MetaDataType> &manager, MetaData<MetaDataType> &objectMetaData) :
-            manager(manager), objectMetaData(objectMetaData)
+        ManagedPtr(MemoryManager<MemoryStrategyType, MetaDataType>* manager, MetaData<MetaDataType>* objectMetaData) :
+            manager(manager),
+            objectMetaData(objectMetaData)
         {}
+
+        ManagedPtr() = default;
 
         Type &operator*()
         {
-            return *manager.GetData<Type>(objectMetaData.GetOffset());
+            return *(manager->GetData<Type>(objectMetaData->GetOffset()));
         }
 
         Type *operator->()
         {
-            return manager.GetData<Type>(objectMetaData.GetOffset());
+            return manager->GetData<Type>(objectMetaData->GetOffset());
         }
 
         Type operator [] (const size_t& value)
         {
-            return *manager.GetData<Type>(objectMetaData.GetOffset() + sizeof(Type)*value);
+            return *(manager->GetData<Type>(objectMetaData->GetOffset() + sizeof(Type)*value));
         }
 
+        MetaData<MetaDataType>* GetMetaData()
+        {
+            return objectMetaData;
+        }
 
         void Free()
         {
-            manager.Remove<Type>(objectMetaData);
+            manager->Remove<Type>(*objectMetaData);
         }
 
-
     private:
-        MetaData<MetaDataType> &objectMetaData;
-        MemoryManager<MemoryStrategyType, MetaDataType> &manager;
+        MetaData<MetaDataType>* objectMetaData = nullptr;
+        MemoryManager<MemoryStrategyType, MetaDataType>* manager = nullptr;
     };
 }
 
