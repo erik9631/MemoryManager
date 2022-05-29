@@ -36,11 +36,22 @@ public:
         usedMemory -= sizeof(T);
     }
 
+
     template<typename T, typename MetaDataType, typename ... Args>
-    void WriteData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, Args ... args)
+    void CopyData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, T* src)
     {
-        new((void*)(metaData.GetOffset() + memoryStartAddr)) T(args ...);
-        usedMemory+= sizeof(T);
+        memcpy((void*)memoryStartAddr, (void*)src, metaData.GetSize());
+        usedMemory+= metaData.GetSize();
+    }
+
+    template<typename T, typename MetaDataType, typename ... Args>
+    void WriteData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, const size_t& size, Args ... args)
+    {
+        if(size > 1)
+            new((void*)(metaData.GetOffset() + memoryStartAddr)) T[size];
+        else
+            new((void*)(metaData.GetOffset() + memoryStartAddr)) T(args ...);
+        usedMemory+= metaData.GetSize();
     }
 
     template<typename T>

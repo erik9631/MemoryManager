@@ -4,6 +4,7 @@
 #include "ObjectTests.hpp"
 #include "Benchmarks.h"
 #include "CombinedTest.hpp"
+#include "CopyTests.hpp"
 
 int main( int argc, char* argv[] )
 {

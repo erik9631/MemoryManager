@@ -28,6 +28,12 @@ namespace MemManager
             return manager.GetData<Type>(objectMetaData.GetOffset());
         }
 
+        Type operator [] (const size_t& value)
+        {
+            return *manager.GetData<Type>(objectMetaData.GetOffset() + sizeof(Type)*value);
+        }
+
+
         void Free()
         {
             manager.Remove<Type>(objectMetaData);

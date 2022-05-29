@@ -29,6 +29,16 @@ namespace MemManager
         * void WriteData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, Args ... args);
         */
 
+
+        /**
+        *
+        * @param data
+        * @param size
+        * @param offset
+        * template<typename T, typename MetaDataType, typename ... Args>
+        * void CopyData(MetaData<MetaDataType>& metaData, size_t& usedMemory, const size_t& memoryStartAddr, T* src);
+        */
+
         /**
          *
          * template<typename T>

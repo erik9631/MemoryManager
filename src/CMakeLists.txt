@@ -18,7 +18,7 @@ source_group(RedBlackMemoryManager/src/Api FILES ${Api})
 set(Tests
         Tests/IntegerTests.hpp
         Tests/TestMemoryStrategy.hpp
-        Tests/ObjectTests.hpp Tests/TestClass.hpp Tests/Utils.hpp Tests/CombinedTest.hpp Tests/Benchmarks.h)
+        Tests/ObjectTests.hpp Tests/TestClass.hpp Tests/Utils.hpp Tests/CombinedTest.hpp Tests/Benchmarks.h Tests/CopyTests.hpp)
 source_group(RedBlackMemoryManager/src/Tests FILES ${Tests})
 
 

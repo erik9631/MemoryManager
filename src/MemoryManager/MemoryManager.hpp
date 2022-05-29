@@ -69,25 +69,43 @@ namespace MemManager
         }
 
         template<typename T, typename ... Args>
-        ManagedPtr<T, MemoryStrategyType, MetaDataType> CreateEntry(std::multimap<size_t, size_t>::iterator& freeSegment, Args ... constructorArgs)
+        ManagedPtr<T, MemoryStrategyType, MetaDataType> CreateMapEntry(MetaData<MetaDataType>* metaData, std::multimap<size_t, size_t>::iterator& freeSegment)
         {
-            size_t size = sizeof(T);
-            size_t offset = freeSegment->second;
-
-
-            size_t remainingSize = freeSegment->first - size;
-            size_t newOffset = size + offset;
+            size_t remainingSize = freeSegment->first - metaData->GetSize();
+            size_t newOffset =  metaData->GetSize() + metaData->GetOffset();
             EraseFreeMemoryNodes(freeSegment);
             if(remainingSize != 0)
                 AddFreeMemoryNode({remainingSize, newOffset});
 
-            auto* metaData = new MetaData<MetaDataType>(offset, size);
-            memoryStrategy.WriteData<T>(*metaData, usedMemory, memoryStartAddr, constructorArgs...);
             auto newMetaData = std::unique_ptr<MetaData<MetaDataType>>(metaData);
-            allocatedMemoryMap.insert({offset, std::move(newMetaData)});
-            auto managedPtr = ManagedPtr<T, MemoryStrategyType, MetaDataType>{*this, *metaData};;
+            allocatedMemoryMap.insert({metaData->GetOffset(), std::move(newMetaData)});
+            return std::move(ManagedPtr<T, MemoryStrategyType, MetaDataType>{*this, *metaData});
+        }
+
+        template<typename T, typename ... Args>
+        ManagedPtr<T, MemoryStrategyType, MetaDataType> WriteDataToMemory(std::multimap<size_t, size_t>::iterator& freeSegment, const size_t& count, Args ... constructorArgs)
+        {
+            size_t size = sizeof(T) * count;
+            size_t offset = freeSegment->second;
+            auto* metaData = new MetaData<MetaDataType>(offset, size);
+            auto managedPtr = CreateMapEntry<T, MemoryStrategyType, MetaDataType>(metaData, freeSegment);
+            memoryStrategy.WriteData<T>(*metaData, usedMemory, memoryStartAddr, count, constructorArgs...);
+
             return managedPtr;
         }
+
+        template<typename T, typename ... Args>
+        ManagedPtr<T, MemoryStrategyType, MetaDataType> CopyDataToMemory(std::multimap<size_t, size_t>::iterator& freeSegment, T* data, const size_t& count)
+        {
+            size_t size = sizeof(T) * count;
+            size_t offset = freeSegment->second;
+            auto* metaData = new MetaData<MetaDataType>(offset, size);
+            auto managedPtr = CreateMapEntry<T, MemoryStrategyType, MetaDataType>(metaData, freeSegment);
+            memoryStrategy.CopyData<T>(*metaData, usedMemory, memoryStartAddr, data);
+
+            return managedPtr;
+        }
+
 
         void EraseFreeMemoryNodes(std::multimap<size_t, size_t>::iterator& freeSegment)
         {
@@ -143,10 +161,24 @@ namespace MemManager
         }
 
     public:
+        template<typename ... Args>
+        MemoryManager(Args ... args) : memoryStrategy(args ...){}
+
+        MemoryStrategyType& GetMemoryStrategy()
+        {
+            return memoryStrategy;
+        }
+
         template<typename T, typename ... Args>
         ManagedPtr<T, MemoryStrategyType, MetaDataType> Create(Args ... constructorArgs)
         {
-            size_t requestedSize = sizeof(T);
+            return CreateArray<T>(1, constructorArgs ...);
+        }
+
+        template<typename T, typename ... Args>
+        ManagedPtr<T, MemoryStrategyType, MetaDataType> CreateArray(const size_t& count, Args ... constructorArgs)
+        {
+            size_t requestedSize = sizeof(T)*count;
             //Find exact match
             auto bestFitSegment = freeMemoryMap.find(requestedSize);
 
@@ -158,9 +190,28 @@ namespace MemManager
             if(bestFitSegment == freeMemoryMap.end())
             {
                 Realloc(sizeof(T));
-                return Create<T>(constructorArgs ...);
+                return CreateArray<T>(count, constructorArgs ...);
             }
-            return CreateEntry<T, Args ...>(bestFitSegment, constructorArgs ...);
+            return WriteDataToMemory<T, Args ...>(bestFitSegment, count, constructorArgs ...);
+        }
+        template<typename T, typename ... Args>
+        ManagedPtr<T, MemoryStrategyType, MetaDataType> Copy(T* data, const size_t& count)
+        {
+            size_t requestedSize = sizeof(T)*count;
+            //Find exact match
+            auto bestFitSegment = freeMemoryMap.find(requestedSize);
+
+            //Find closest match
+            if(bestFitSegment == freeMemoryMap.end())
+                bestFitSegment = freeMemoryMap.upper_bound(requestedSize);
+
+            //If no segment is found, realloc is needed
+            if(bestFitSegment == freeMemoryMap.end())
+            {
+                Realloc(sizeof(T));
+                return Copy<T>(data, count);
+            }
+            return CopyDataToMemory<T, Args ...>(bestFitSegment, data, count);
         }
 
         template<class T>
